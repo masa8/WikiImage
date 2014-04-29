@@ -8,7 +8,20 @@
 =========
 Wikipedia内の画像をキーワードで探せて、画像とライセンスを取得できる。
 
+使い方
+=====
+ #0. rubyがインストールされているとします
 
+ #1. wiki_image-0.0.0.gem をインストール
+　 $gem install wiki_image-0.0.0.gem
+ #2. コマンドラインで、wiki_image_loaderとタイプして、
+　　-k オプションをつけて、検索したいページのタイトルをつけてエンター 
+ 　
+　　$wiki_image_loader -k <your_keywork>
+　　　（例：wiki_image_loader -k 東海道）
+ 
+　　＝＞ja.wikipdia.orgの東海道のページに含まれる画像を取得します。
+　　＝＞ファイル名には"KEY_検索キー_USER_アップロードした人野名前_FILE_ファイル名”が記載されます。
 
 -開発者向け-----------------------
 
