@@ -1,0 +1,167 @@
+
+ありたい姿
+=========
+だれでも簡単にライセンスが明確な画像を適切かつ効果的に利用できる。
+
+
+提供ツール
+=========
+Wikipedia内の画像をキーワードで探せて、画像とライセンスを取得できる。
+
+
+
+-開発者向け-----------------------
+
+MediawikiAPI
+===========
+ => http://www.mediawiki.org/wiki/API
+
+::導入::
+ メディアウィキからデータを取り出すには２つ方法があります。
+　１. エクスポートページ
+　２. WEBAPI
+
+ このツールではWEBAPIを使います。
+
+::簡単な例::
+ 次のURLは、英語のwikipediaのサービスAPIに対して、メインページのコンテンツを送ってもらうようにお願いします。
+
+ http://en.wikipedia.org/w/api.php?format=json&action=query&titles=Main%20Page&prop=revisions&rvprop=content
+
+ HTTP GETリクエストができる言語を使ったり、単にブラウザを使うと、JSON形式で、メインページの内容が得られます。
+ 形式をjsonfmにすると、デバッグしやすい書式になります。
+ それでは、上記のURLの詳細を見ていきましょう。
+
+::ベース::
+ http://en.wikipedia.org/w/api.php
+ 英語のMediawikiAPIのホームページとも言えるベースのURLです。
+ 違う言語のメディアウィキ用には違うベースURLになります。
+ 例えば、
+  http://en.wikipedia.org/w/api.php      # 英語用
+  http://nl.wikipedia.org/w/api.php      # ドイツ用
+  http://commons.wikipedia.org/w/api.php # Wikipedia Commons API
+
+::形式::
+ ?format=json
+ ------------
+  json形式でデータを返してほしい場合の書き方です。
+　jsonfmを指定してデバッグしやすい形式にすることもできます。
+　json以外のフォーマットはサポートしなくなるかもしれないので使わない方がいいです。
+
+::アクション::
+ &action=query
+ -------------
+  50以上のアクションがあるので詳細はリファレンスを見てください。
+　queryはデータを取得するときに使います。
+ 
+ アクション固有パラメタ)
+ 残りは、アクション固有のパラメータになります。
+
+ &titles=Main%20Page
+ -------------------
+  "Main Page"というタイトルのウィキページの情報が欲しい場合に指定します。
+　もし複数のページを一つのリクエストで処理したい場合は、
+　”titles=PageA|PageB|PageC"のように記載します。
+
+ &prop=revisions
+ ---------------
+  特定リビジョンのページについての情報が欲しい場合に指定します。
+　指定しない場合は最新バージョンの情報が取得されます。
+  
+  画像情報が欲しい場合はprop=imagesを指定します。
+　 例：#1. Main Pageで使われる画像のリストを得る
+
+	コマンド）
+　　　　   api.php?action=query&prop=images&titles=Main%20Page
+
+	結果）
+	<?xml version="1.0"?>
+	<api>
+  	<query-continue>
+    	<images imcontinue="15580374|Wikiquote-logo-51px.png" />
+  	</query-continue>
+  	<query>
+    	<pages>
+      	<page pageid="15580374" ns="0" title="Main Page">
+        <images>
+          <im ns="6" title="File:Commons-logo-31px.png" />
+          <im ns="6" title="File:Entacmaea quadricolor (Bubble tip anemone).jpg" />
+          <im ns="6" title="File:HMS Endeavour off the coast of New Holland, by Samuel Atkins c.1794 (cropped).jpg" />
+          <im ns="6" title="File:Mediawiki-logo.png" />
+          <im ns="6" title="File:Meta-logo-35px.png" />
+          <im ns="6" title="File:Nancy Wake (1945).jpg" />
+          <im ns="6" title="File:Patera and plateau on Io.jpg" />
+          <im ns="6" title="File:Wikibooks-logo-35px.png" />
+          <im ns="6" title="File:Wikidata-logo.svg" />
+          <im ns="6" title="File:Wikinews-logo-51px.png" />
+        </images>
+      	</page>
+    	</pages>
+  	</query>
+	</api>
+
+
+       #2. Main Pageで使われる画像の情報を得る。
+　　　
+	コマンド）
+	　　 api.php?action=query&generator=images&titles=Main%20Pages&prop=info
+        
+	結果）   
+	<?xml version="1.0"?>
+	<api>
+  	<query-continue>
+    	<images gimcontinue="15580374|Wikiquote-logo-51px.png" />
+  	</query-continue>
+  	<query>
+    	<pages>
+      	<page ns="6" title="File:HMS Endeavour off the coast of New Holland, by Samuel Atkins c.1794 (cropped).jpg" missing="" contentmodel="wikitext" pagelanguage="en" />
+      	<page ns="6" title="File:Mediawiki-logo.png" missing="" contentmodel="wikitext" pagelanguage="en" />
+      	<page ns="6" title="File:Nancy Wake (1945).jpg" missing="" contentmodel="wikitext" pagelanguage="en" />
+      	<page ns="6" title="File:Patera and plateau on Io.jpg" missing="" contentmodel="wikitext" pagelanguage="en" />
+      	<page ns="6" title="File:Wikidata-logo.svg" missing="" contentmodel="wikitext" pagelanguage="en" />
+      	<page pageid="6532256" ns="6" title="File:Commons-logo-31px.png" contentmodel="wikitext" pagelanguage="en" touched="2014-04-28T11:20:07Z" lastrevid="586924938" counter="" length="61" />
+      	<page pageid="29439980" ns="6" title="File:Entacmaea quadricolor (Bubble tip anemone).jpg" contentmodel="wikitext" pagelanguage="en" touched="2014-04-29T09:18:53Z" lastrevid="604085717" counter="" length="105" />
+      	<page pageid="20279498" ns="6" title="File:Meta-logo-35px.png" contentmodel="wikitext" pagelanguage="en" touched="2014-04-28T11:20:07Z" lastrevid="586924891" counter="" length="253" />
+      	<page pageid="4504570" ns="6" title="File:Wikibooks-logo-35px.png" contentmodel="wikitext" pagelanguage="en" touched="2014-04-28T11:20:07Z" lastrevid="586924895" counter="" length="61" />
+      	<page pageid="6532245" ns="6" title="File:Wikinews-logo-51px.png" contentmodel="wikitext" pagelanguage="en" touched="2014-04-28T11:20:07Z" lastrevid="272367784" counter="" length="61" />
+    	</pages>
+  	</query>
+	</api>
+
+
+          prop=infoで、ページの基本情報（タイトル、修正日など）が得られます。
+
+  propで指定される他の値としては、categories, categoryinfo, contributors, 
+                  		　duplicatefiles, extlinks, 
+                  		　imageinfo, info, links,などなど
+ &rvprop=content
+ 
+  コンテンツを取得します。
+  rvprop=content|user でコンテンツと最新版の改訂者が表示されます。
+ 
+ 
+ &iiprop=timestamp
+ ---------
+  どんな画像を取得するか指定します。
+　　　timestamp リビジョンのタイムスタンプ
+      user 	アップした人の名前
+　　　userid	アップした人のユーザID
+      comment   バージョンのコメント
+      parsedcomment バージョンのコメント（みやすい）
+      canonicaltitle 昔のタイトル
+      url            URL
+      size	     画像サイズ（幅高さ）
+　　　dimensions     sizeと同じ
+      sha1	     SHA-1ハッシュ値
+      mime	     画像のMIME タイプ
+　　　thumbmime      サムネイル画像のMIMEタイプ
+　　　mediatype	     画像のメディアタイプ
+　　　metadata       EXIF メタデータ
+　　　commonmetadata ファイルフォーマット（HTML形式）
+　　  extmetadata    フォーマット化されたメタデータ（HTML形式）
+      archivename    圧縮ファイル名
+      bitdepth       ビット深度
+　　　uploadwarning  n/a (内部使用用途）
+　　　デフォルト：timestamp|user
+
+

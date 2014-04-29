@@ -1,0 +1,16 @@
+#!/usr/bin/env ruby
+require 'optparse'
+require 'wiki_image'
+
+key = ""
+opt = OptionParser.new
+opt.on("-k [VAL]","--keywords [VAL]" ){|val| key = val } 
+opt.parse!(ARGV)
+
+images = WikiImage.new(key).getImages
+loader = WikiImageLoader.new
+loader.dl(key,images)
+
+
+
+

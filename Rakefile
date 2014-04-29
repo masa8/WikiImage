@@ -1,14 +1,7 @@
 require 'rake'
 require 'rake/testtask'
-require 'rake/rdoctask'
-require 'spec/rake/spectask'
+require 'rdoc/task'
 
-desc 'Default: run specs'
-task :default => :spec
-
-Spec::Rake::SpecTask.new do |t|
-  t.spec_files = FileList["spec/**/*_spec.rb"]
-end
 
 desc 'Generate documentation for the wiki_image plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
@@ -18,3 +11,10 @@ Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_files.include('README')
   rdoc.rdoc_files.include('lib/**/*.rb')
 end
+
+
+Rake::TestTask.new do |t|
+  t.libs << 'test'
+end
+desc "Run tests"
+task :default => :test
